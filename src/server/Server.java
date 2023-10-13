@@ -49,6 +49,37 @@ public class Server {
         }
     }
 
+    public void removeUser(User user) {
+        this.clients.remove(user);
+    }
+
+    public void broadcastMessages(String message, User sender) {
+        for(User client : this.clients) {
+            client.getOutStream().println(sender.toString() + "<span>: "+ message + "</span>");
+        }
+    }
+
+    public void broadcastAllUsers() {
+        for(User client : this.clients) {
+            client.getOutStream().println(this.clients);
+        }
+    }
+
+    public void sendMessageToUser(String message, User sender, String receiver) {
+        boolean find = false;
+        for(User client : this.clients) {
+            if(client.getNickName().equals(receiver) && client != sender) {
+                find = true;
+                sender.getOutStream().println(sender.toString() + " -> " + client.toString()+": "+message);
+                client.getOutStream().println("(<b>Private</b>)" + sender.toString() + "<span> :"+ message +"</span>");
+            }
+        }
+
+        if(!find) {
+            sender.getOutStream().println(sender.toString() + " -> (<b> no one </b>)" + message);
+        }
+    }
+
 
 
     public static void main(String[] args) {
