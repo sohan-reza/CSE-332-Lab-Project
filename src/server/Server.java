@@ -42,7 +42,10 @@ public class Server {
 
             newUser.getOutStream().println("<b>Welcome</b> "+ newUser.toString());
 
-            
+            UserHandler userHandler = new UserHandler(this, newUser);
+            Thread userHandlerThread = new Thread(userHandler);
+            userHandlerThread.start();
+
         }
     }
 
