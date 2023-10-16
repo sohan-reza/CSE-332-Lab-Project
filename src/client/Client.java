@@ -18,7 +18,7 @@ public class Client {
         this.PORT = 5050;
         this.name = "nickname";
 
-        Font font = new Font("Arial, sans-serif", Font.PLAIN, 15);
+
 
         final JFrame jFrame = new JFrame();
         jFrame.setTitle("Wii");
@@ -28,8 +28,19 @@ public class Client {
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
+        messageBox.setBounds(25, 25, 490, 325);
+        messageBox.setFont(new Font("Arial, sans-serif", Font.PLAIN, 15));
+        messageBox.setMargin(new Insets(6,6,6,6));
+        messageBox.setEditable(false);
+        messageBox.setContentType("text/html");
+        messageBox.putClientProperty(JTextPane.HONOR_DISPLAY_PROPERTIES, true);
+
+        JScrollPane messageBoxScroller = new JScrollPane(messageBox);
+        messageBoxScroller.setBounds(25, 25, 490, 325);
 
 
+
+        jFrame.add(messageBox);
         jFrame.setVisible(true);
     }
 
