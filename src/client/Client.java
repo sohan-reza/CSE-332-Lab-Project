@@ -2,12 +2,26 @@ package client;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 public class Client {
 
     final JTextPane messageBox =  new JTextPane();
     final JTextPane activeUserBox = new JTextPane();
     final JTextField promptBox = new JTextField();
+
+    PrintWriter output;
+    BufferedReader input;
+    Socket server;
+
+    String oldMessage;
 
     private String serverName;
     private int PORT;
@@ -69,6 +83,43 @@ public class Client {
         JButton disconnectButton = new JButton("Disconnect");
         disconnectButton.setFont(new Font("Arial, sans-serif", Font.PLAIN, 15));
         disconnectButton.setBounds(25, 410, 130, 35);
+
+        // Key Listner
+        promptBox.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+                // send message on enter key pressed
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    //send message
+                }
+
+                //
+                if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    String currentMessage = promptBox.getText().trim();
+                    promptBox.setText(oldMessage);
+                    oldMessage = currentMessage;
+                }
+
+            }
+        });
+
+        // click on send button
+
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //send message
+            }
+        });
+
+        // connect info
+        JTextField serverIpAddress = new JTextField(this.serverName);
+        JTextField serverPort = new JTextField(this.PORT);
+        JTextField userName = new JTextField(this.name);
+        JButton connectButton = new JButton("Connect");
+
+       
 
 
 
