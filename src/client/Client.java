@@ -115,19 +115,36 @@ public class Client {
 
         // connect info
         JTextField serverIpAddress = new JTextField(this.serverName);
-        JTextField serverPort = new JTextField(this.PORT);
+        JTextField serverPort = new JTextField(String.valueOf(this.PORT));
         JTextField userName = new JTextField(this.name);
         JButton connectButton = new JButton("Connect");
 
-       
 
+        serverIpAddress.getDocument().addDocumentListener(new TextListener(serverIpAddress, serverPort, userName, connectButton));
+        serverPort.getDocument().addDocumentListener(new TextListener(serverIpAddress, serverPort, userName, connectButton));
+        userName.getDocument().addDocumentListener(new TextListener(serverIpAddress, serverPort, userName, connectButton));
 
+        connectButton.setFont(new Font("Arial, sans-serif", Font.PLAIN, 15));
+        serverIpAddress.setBounds(25, 380, 135, 40);
+        serverPort.setBounds(200, 380, 135, 40);
+        userName.setBounds(375, 380, 135, 40);
+        connectButton.setBounds(575, 380, 100, 40);
 
+        messageBox.setBackground(Color.GRAY);
+        activeUserBox.setBackground(Color.GRAY);
+
+        // Add components to the main frame
         jFrame.add(messageBox);
         jFrame.add(activeUserBox);
-        jFrame.add(promptBox);
-        jFrame.add(sendButton);
+
+        jFrame.add(serverIpAddress);
+        jFrame.add(serverPort);
+        jFrame.add(userName);
+        jFrame.add(connectButton);
         jFrame.setVisible(true);
+
+
+
     }
 
     public static void main(String[] args) {
