@@ -1,6 +1,8 @@
 package client;
 
 import javax.swing.*;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -145,6 +147,18 @@ public class Client {
 
 
 
+    }
+
+    private void appendTextToPane(JTextPane textPane, String message) {
+        HTMLDocument document = (HTMLDocument) textPane.getDocument();
+        HTMLEditorKit editor = (HTMLEditorKit) textPane.getEditorKit();
+
+        try{
+          editor.insertHTML(document, document.getLength(), message, 0, 0, null);
+          textPane.setCaretPosition(document.getLength());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
