@@ -10,8 +10,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Client {
 
@@ -22,6 +27,8 @@ public class Client {
     PrintWriter output;
     BufferedReader input;
     Socket server;
+
+    Thread read;
 
     String oldMessage;
 
@@ -111,7 +118,7 @@ public class Client {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //send message
+                //send
             }
         });
 
@@ -145,6 +152,54 @@ public class Client {
         jFrame.add(connectButton);
         jFrame.setVisible(true);
 
+        appendTextToPane(messageBox, "<h1>Java Lab Project</h1>");
+
+        connectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    serverName = serverIpAddress.getText();
+                    PORT = Integer.parseInt(serverPort.getText());
+                    name = userName.getName();
+
+                    appendTextToPane(messageBox, "<span>Connecting to </span>"+serverName+" <span>port "+PORT+"</span>");
+                    server = new Socket(serverName, PORT);
+
+                    appendTextToPane(messageBox, "<span>Connected to </span>"+server.getRemoteSocketAddress()+"</span>");
+                    input = new BufferedReader(new InputStreamReader(server.getInputStream()));
+                    output = new PrintWriter(server.getOutputStream());
+
+                    //send user name to server
+                    output.println(name);
+
+                    //Thread for read
+                    read = new Read();
+                    read.start();
+
+                    //remove connect interface from the window
+                    jFrame.remove(serverIpAddress);
+                    jFrame.remove(serverPort);
+                    jFrame.remove(userName);
+                    jFrame.remove(connectButton);
+
+                    //add message send interface to the window
+                    jFrame.add(promptBox);
+                    jFrame.add(sendButton);
+                    jFrame.add(disconnectButton);
+
+                    jFrame.revalidate();
+                    jFrame.repaint();
+
+                    messageBox.setBackground(Color.WHITE);
+                    activeUserBox.setBackground(Color.WHITE);
+
+
+                } catch(Exception e) {
+                    appendTextToPane(messageBox, "<span>Faild to connect with server!</span>");
+                    JOptionPane.showMessageDialog(jFrame, e.getMessage());
+                }
+            }
+        });
 
 
     }
@@ -163,6 +218,34 @@ public class Client {
 
     public static void main(String[] args) {
         Client client = new Client();
+    }
+
+    public  class Read extends Thread {
+        @Override
+        public void run() {
+            String message;
+            while(Thread.currentThread().isInterrupted() == false) {
+                try{
+                    message = input.readLine();
+                    if(message != null) {
+                        if(message.charAt(0) == '[') {
+                            message = message.substring(1, message.length()-1);
+                            List<String> userList = new ArrayList<>(Arrays.asList(message.split(", ")));
+                            activeUserBox.setText(null);
+
+                            for(String user : userList) {
+                                appendTextToPane(activeUserBox, "@" + user);
+                            }
+
+                        }else {
+                            appendTextToPane(messageBox, message);
+                        }
+                    }
+                }catch(IOException e) {
+                    System.err.println("Failed to parse message!");
+                }
+            }
+        }
     }
 }
 
