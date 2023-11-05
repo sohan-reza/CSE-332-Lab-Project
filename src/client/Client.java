@@ -52,7 +52,7 @@ public class Client {
 
 
         // Message display box
-        messageBox.setBounds(25, 25, 490, 325);
+        messageBox.setBounds(25, 25, 490, 320);
         messageBox.setFont(new Font("Arial, sans-serif", Font.PLAIN, 15));
         messageBox.setMargin(new Insets(6,6,6,6));
         messageBox.setEditable(false);
@@ -60,11 +60,11 @@ public class Client {
         messageBox.putClientProperty(JTextPane.HONOR_DISPLAY_PROPERTIES, true);
 
         JScrollPane messageBoxScroller = new JScrollPane(messageBox);
-        messageBoxScroller.setBounds(25, 25, 490, 325);
+        messageBoxScroller.setBounds(25, 25, 490, 320);
 
 
         // Active user box
-        activeUserBox.setBounds(520, 25, 156, 325);
+        activeUserBox.setBounds(520, 25, 156, 320);
         activeUserBox.setEditable(false);
         activeUserBox.setFont(new Font("Arial, sans-serif", Font.PLAIN, 15));
         activeUserBox.setMargin(new Insets(6, 6, 6, 6));
@@ -72,10 +72,10 @@ public class Client {
         activeUserBox.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
 
         JScrollPane userBoxScroller = new JScrollPane(activeUserBox);
-        userBoxScroller.setBounds(520, 25, 156, 325);
+        userBoxScroller.setBounds(520, 25, 156, 320);
 
         // Message input box
-        promptBox.setBounds(0, 350, 400, 50);
+        promptBox.setBounds(25, 350, 650, 50);
         promptBox.setFont(new Font("Arial, sans-serif", Font.PLAIN, 15));
         promptBox.setMargin(new Insets(6, 6, 6, 6));
 
@@ -169,7 +169,7 @@ public class Client {
                     input = new BufferedReader(new InputStreamReader(server.getInputStream()));
                     output = new PrintWriter(server.getOutputStream());
 
-                    //send user name to server
+                    //send username to server
                     output.println(name);
 
                     //Thread for read
@@ -198,6 +198,37 @@ public class Client {
                     appendTextToPane(messageBox, "<span>Faild to connect with server!</span>");
                     JOptionPane.showMessageDialog(jFrame, e.getMessage());
                 }
+            }
+        });
+
+        disconnectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //remove message send interface from the window
+                jFrame.remove(promptBox);
+                jFrame.remove(sendButton);
+                jFrame.remove(disconnectButton);
+
+                //add connect interface to the window
+                jFrame.add(serverIpAddress);
+                jFrame.add(serverPort);
+                jFrame.add(userName);
+                jFrame.add(connectButton);
+
+
+                jFrame.revalidate();
+                jFrame.repaint();
+
+                read.interrupt();
+
+                activeUserBox.setText(null);
+
+                messageBox.setBackground(Color.LIGHT_GRAY);
+                activeUserBox.setBackground(Color.LIGHT_GRAY);
+
+                appendTextToPane(messageBox, "<span>Connection closed.</span>");
+                output.close();
+
             }
         });
 
