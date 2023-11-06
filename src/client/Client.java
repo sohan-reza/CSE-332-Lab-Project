@@ -45,7 +45,8 @@ public class Client {
 
         final JFrame jFrame = new JFrame();
         jFrame.setTitle("Wii");
-        jFrame.setLayout(null);
+        //jFrame.setLayout(null);
+        jFrame.getContentPane().setLayout(null);
         jFrame.setSize(700, 500);
         jFrame.setResizable(false);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,10 +58,11 @@ public class Client {
         messageBox.setMargin(new Insets(6,6,6,6));
         messageBox.setEditable(false);
         messageBox.setContentType("text/html");
-        messageBox.putClientProperty(JTextPane.HONOR_DISPLAY_PROPERTIES, true);
+        messageBox.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
 
         JScrollPane messageBoxScroller = new JScrollPane(messageBox);
         messageBoxScroller.setBounds(25, 25, 490, 320);
+
 
 
         // Active user box
@@ -101,6 +103,7 @@ public class Client {
                 // send message on enter key pressed
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     //send message
+                    sendMessage();
                 }
 
                 //
@@ -118,7 +121,7 @@ public class Client {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //send
+                sendMessage();
             }
         });
 
@@ -143,8 +146,8 @@ public class Client {
         activeUserBox.setBackground(Color.GRAY);
 
         // Add components to the main frame
-        jFrame.add(messageBox);
-        jFrame.add(activeUserBox);
+        jFrame.add(messageBoxScroller);
+        jFrame.add(userBoxScroller);
 
         jFrame.add(serverIpAddress);
         jFrame.add(serverPort);
@@ -167,7 +170,7 @@ public class Client {
 
                     appendTextToPane(messageBox, "<span>Connected to </span>"+server.getRemoteSocketAddress()+"</span>");
                     input = new BufferedReader(new InputStreamReader(server.getInputStream()));
-                    output = new PrintWriter(server.getOutputStream());
+                    output = new PrintWriter(server.getOutputStream(), true);
 
                     //send username to server
                     output.println(name);
@@ -244,6 +247,24 @@ public class Client {
           textPane.setCaretPosition(document.getLength());
         } catch(Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void sendMessage() {
+        try {
+            String message = promptBox.getText().trim();
+            if(message.isEmpty()) {
+                return;
+            }
+
+            this.oldMessage = message;
+            output.println(message);
+            promptBox.requestFocus();
+            promptBox.setText(null);
+
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            System.exit(0);
         }
     }
 
