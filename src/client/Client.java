@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,7 @@ public class Client {
     private String serverName;
     private int PORT;
     private String name;
+    
     public Client() {
         //initial default value
         this.serverName = "localhost";
@@ -163,12 +165,14 @@ public class Client {
                 try {
                     serverName = serverIpAddress.getText();
                     PORT = Integer.parseInt(serverPort.getText());
-                    name = userName.getName();
+                    name = userName.getText();
+                    System.out.println(name);
 
                     appendTextToPane(messageBox, "<span>Connecting to </span>"+serverName+" <span>port "+PORT+"</span>");
-                    server = new Socket(serverName, PORT);
+                    server = new Socket(InetAddress.getByName(serverName), PORT);
 
                     appendTextToPane(messageBox, "<span>Connected to </span>"+server.getRemoteSocketAddress()+"</span>");
+                   
                     input = new BufferedReader(new InputStreamReader(server.getInputStream()));
                     output = new PrintWriter(server.getOutputStream(), true);
 
